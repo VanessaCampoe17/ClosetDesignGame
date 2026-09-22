@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 800" width="500" height="800"><g id="normalized-garment-layer" transform="matrix(2.2000 0 0 2.2000 140.0000 350.0000)"><path d="M 25 5 L 75 5 L 85 40 L 95 75 L 5 75 L 15 40 Z" fill="#FF69B4" />
+  <path d="M 10 50 Q 50 60 90 50" stroke="#FFFFFF" stroke-width="3" fill="none" />
+  <path d="M 5 70 Q 50 80 95 70" stroke="#FFFFFF" stroke-width="3" fill="none" />
+</g></svg>
