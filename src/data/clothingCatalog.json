@@ -1,0 +1,38 @@
+{
+  "version": "1.1.0",
+  "items": [
+    {
+      "id": "1890s-eu-victorian-corset-01",
+      "name": "Victorian Tailored Corset Bodice",
+      "era": "1890s",
+      "region": "Europe",
+      "category": "tops",
+      "targetFrame": "feminine",
+      "svgPath": "/assets/garments/1890s/victorian_bodice.svg",
+      "defaultZIndex": 25,
+      "anchorCoords": { "x": 250, "y": 230 }
+    },
+    {
+      "id": "1950s-na-greaser-jacket-01",
+      "name": "Classic Biker Leather Jacket",
+      "era": "1950s",
+      "region": "North America",
+      "category": "tops",
+      "targetFrame": "masculine",
+      "svgPath": "/assets/garments/1950s/leather_jacket.svg",
+      "defaultZIndex": 35,
+      "anchorCoords": { "x": 250, "y": 215 }
+    },
+    {
+      "id": "1990s-ea-harajuku-skirt-01",
+      "name": "Decora Tiered Ruffle Mini Skirt",
+      "era": "1990s",
+      "region": "East Asia",
+      "category": "bottoms",
+      "targetFrame": "feminine",
+      "svgPath": "/assets/garments/1990s/harajuku_skirt.svg",
+      "defaultZIndex": 20,
+      "anchorCoords": { "x": 250, "y": 350 }
+    }
+  ]
+}
