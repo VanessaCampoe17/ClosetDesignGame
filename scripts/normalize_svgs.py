@@ -34,7 +34,7 @@ def normalize_svg(input_path, output_path, category="bottoms"):
     """Scales, centers, and wraps the SVG into the standard 500x800 viewBox."""
     config = ANCHOR_CONFIG.get(category, ANCHOR_CONFIG["bottoms"])
 
-    # Prevent ElementTree from prepending 'ns0:' to tags
+    # Register default namespace without prefix
     ET.register_namespace("", "http://www.w3.org/2000/svg")
 
     tree = ET.parse(input_path)
@@ -42,23 +42,22 @@ def normalize_svg(input_path, output_path, category="bottoms"):
 
     min_x, min_y, raw_w, raw_h = get_dimensions(root)
 
-    # Calculate uniform scaling factor
+    # Uniform scale factor
     scale = config["target_width"] / raw_w
     scaled_w = raw_w * scale
 
-    # Reposition relative to the center horizontal line and anchor Y
+    # Align horizontally to center line and vertically to target anchor
     translate_x = config["x"] - (scaled_w / 2.0) - (min_x * scale)
     translate_y = config["y"] - (min_y * scale)
 
-    # Standardized 500x800 canvas root
+    # Note: Do not pass xmlns manually in the dict; register_namespace handles it cleanly
     new_root = ET.Element("svg", {
-        "xmlns": "http://www.w3.org/2000/svg",
         "viewBox": f"0 0 {TARGET_CANVAS_WIDTH} {TARGET_CANVAS_HEIGHT}",
         "width": str(TARGET_CANVAS_WIDTH),
         "height": str(TARGET_CANVAS_HEIGHT)
     })
 
-    # Wrap the original paths into a normalized group layer
+    # Wrap elements into normalized group
     wrapper = ET.SubElement(new_root, "g", {
         "id": "normalized-garment-layer",
         "transform": f"matrix({scale:.4f} 0 0 {scale:.4f} {translate_x:.4f} {translate_y:.4f})"
@@ -72,7 +71,6 @@ def normalize_svg(input_path, output_path, category="bottoms"):
     print(f"Success! Normalized: {output_path}")
 
 if __name__ == "__main__":
-    # Process the test file directly to the exact path in clothingCatalog.json
     raw_file = "raw_assets/harajuku_skirt_raw.svg"
     clean_output = "public/assets/garments/1990s/harajuku_skirt.svg"
     
