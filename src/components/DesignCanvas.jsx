@@ -1,10 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import * as fabric from "fabric";
 
+
+
 export default function DesignCanvas() {
   const canvasElRef = useRef(null);
   const fabricCanvasRef = useRef(null);
   const garmentBoundaryRef = useRef(null); // holds the current clip shape
+
+  // Tracks the frames for our FPS counter
+const fpsRef = useRef({
+  frames: 0,
+  lastTime: 0,
+});
+
+const [fps, setFps] = useState(0);
 
   const [strokeWidth, setStrokeWidth] = useState(5);
   const [strokeColor, setStrokeColor] = useState("#ff0000");
@@ -19,8 +29,38 @@ export default function DesignCanvas() {
       width: 600,
       height: 800,
       backgroundColor: CANVAS_BG,
+      
     });
     fabricCanvasRef.current = canvas;
+
+    
+// Measures the browser's animation frame rate
+let animationFrameId;
+
+const measureFPS = (time) => {
+  const tracker = fpsRef.current;
+
+  if (tracker.lastTime === 0) {
+    tracker.lastTime = time;
+  }
+
+  tracker.frames++;
+
+  const elapsed = time - tracker.lastTime;
+
+  // Update the FPS every second
+  if (elapsed >= 1000) {
+    setFps(Math.round((tracker.frames * 1000) / elapsed));
+
+    tracker.frames = 0;
+    tracker.lastTime = time;
+  }
+
+  animationFrameId = requestAnimationFrame(measureFPS);
+};
+
+animationFrameId = requestAnimationFrame(measureFPS);
+
 
     const mannequin = new fabric.Rect({
       left: 200,
@@ -49,7 +89,10 @@ export default function DesignCanvas() {
     garmentBoundaryRef.current = garmentBoundary;
 
     canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+
+    canvas.freeDrawingBrush.decimate = 2;
     canvas.isDrawingMode = true;
+   
 
     // Clip every new freehand stroke to the garment boundary shape
     const handlePathCreated = async (e) => {
@@ -67,10 +110,11 @@ export default function DesignCanvas() {
 
     canvas.on("path:created", handlePathCreated);
 
-    return () => {
-      canvas.off("path:created", handlePathCreated);
-      canvas.dispose();
-    };
+  return () => {
+  cancelAnimationFrame(animationFrameId);
+  canvas.off("path:created", handlePathCreated);
+  canvas.dispose();
+};
   }, []);
 
   // Keep the brush in sync with the controls
@@ -128,9 +172,13 @@ export default function DesignCanvas() {
           />
         </label>
 
-        <button onClick={() => setIsEraser((prev) => !prev)}>
+                 <button onClick={() => setIsEraser((prev) => !prev)}>
           {isEraser ? "Switch to Brush" : "Switch to Eraser"}
         </button>
+      </div>
+
+      <div style={{ marginBottom: 10 }}>
+        <strong>FPS: {fps}</strong>
       </div>
 
       <canvas ref={canvasElRef} />
