@@ -18,6 +18,8 @@ function App() {
   const [selectedRegion, setSelectedRegion] = useState("All");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedGarment, setSelectedGarment] = useState(null);
+  const [selectedFrame, setSelectedFrame] = useState("neutral");
+  const [selectedBodyType, setSelectedBodyType] = useState("average");
 
   // Build the era and region options directly from the catalog.
   const eras = [
@@ -165,6 +167,49 @@ function App() {
             </div>
           </div>
 
+          {/* Mannequin customization controls */}
+          <div className="mt-6">
+            <h3 className="mb-3 text-sm font-semibold uppercase text-gray-500">
+              Mannequin Settings
+            </h3>
+            <p className="mb-2 text-sm font-medium">Frame</p>
+            <div className="grid grid-cols-3 gap-2">
+              {["feminine", "masculine", "neutral"].map((frame) => (
+                <button
+                  key={frame}
+                  type="button"
+                  onClick={() => setSelectedFrame(frame)}
+                  className={`rounded border p-2 text-xs capitalize ${
+                    selectedFrame === frame
+                      ? "bg-black text-white"
+                      : "bg-white hover:bg-gray-100"
+                  }`}
+                >
+                  {frame}
+                </button>
+              ))}
+            </div>
+
+            <p className="mb-2 mt-4 text-sm font-medium">Body Type</p>
+            <div className="grid grid-cols-3 gap-2">
+              {["slim", "average", "broad"].map((bodyType) => (
+                <button
+                  key={bodyType}
+                  type="button"
+                  onClick={() => setSelectedBodyType(bodyType)}
+                  className={`rounded border p-2 text-xs capitalize ${
+                    selectedBodyType === bodyType
+                      ? "bg-black text-white"
+                      : "bg-white hover:bg-gray-100"
+                  }`}
+                >
+                  {bodyType}
+                </button>
+              ))}
+            </div>
+          </div>
+
+
           {/* Garments matching the selected filters */}
           <div className="mt-6">
             <h3 className="mb-2 text-sm font-semibold uppercase text-gray-500">
@@ -215,7 +260,11 @@ function App() {
           </div>
 
           <div className="rounded-xl bg-white p-5 shadow">
-            <DesignCanvas selectedGarment={selectedGarment} />
+            <DesignCanvas
+              selectedGarment={selectedGarment}
+              frame={selectedFrame}
+              bodyType={selectedBodyType}
+            />
           </div>
         </main>
       </div>
