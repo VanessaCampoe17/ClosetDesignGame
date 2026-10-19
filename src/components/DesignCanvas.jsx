@@ -3,10 +3,99 @@ import * as fabric from "fabric";
 
 
 
-export default function DesignCanvas() {
+const FRAME_WIDTHS = {
+  feminine: 180,
+  masculine: 215,
+  neutral: 200,
+};
+
+const BODY_MULTIPLIERS = {
+  slim: 0.85,
+  average: 1,
+  broad: 1.15,
+};
+
+const GARMENT_COLORS = {
+  tops: "rgba(0, 100, 255, 0.5)",
+  bottoms: "rgba(0, 180, 100, 0.5)",
+  headwear: "rgba(255, 180, 0, 0.7)",
+};
+
+function getMannequinWidth(frame, bodyType) {
+  return (
+    (FRAME_WIDTHS[frame] ?? 200) *
+    (BODY_MULTIPLIERS[bodyType] ?? 1)
+  );
+}
+
+function getGarmentBounds(category, mannequinWidth) {
+  const scale = mannequinWidth / 200;
+
+  if (category === "tops") {
+    return {
+      left: 300 - 80 * scale,
+      top: 270,
+      width: 160 * scale,
+      height: 140,
+    };
+  }
+
+  if (category === "bottoms") {
+    return {
+      left: 300 - 80 * scale,
+      top: 410,
+      width: 160 * scale,
+      height: 190,
+    };
+  }
+
+  if (category === "headwear") {
+    return {
+      left: 300 - 50 * scale,
+      top: 210,
+      width: 100 * scale,
+      height: 50,
+    };
+  }
+
+  return null;
+}
+
+const LAYER_ORDER = {
+  mannequin: 0,
+  bottoms: 1,
+  tops: 2,
+  headwear: 3,
+  boundary: 4,
+};
+
+function sortCanvasLayers(canvas) {
+  const objects = [...canvas.getObjects()];
+
+  objects.sort(
+    (a, b) =>
+      (LAYER_ORDER[a.layerType] ?? 2) -
+      (LAYER_ORDER[b.layerType] ?? 2)
+  );
+
+  objects.forEach((object, index) => {
+    canvas.moveObjectTo(object, index);
+  });
+
+  canvas.requestRenderAll();
+}
+
+
+export default function DesignCanvas({
+  selectedGarment,
+  frame,
+  bodyType,
+}) {
   const canvasElRef = useRef(null);
   const fabricCanvasRef = useRef(null);
   const garmentBoundaryRef = useRef(null); // holds the current clip shape
+  const mannequinRef = useRef(null);
+  const equippedGarmentsRef = useRef({});
 
   // Tracks the frames for our FPS counter
 const fpsRef = useRef({
@@ -71,6 +160,8 @@ animationFrameId = requestAnimationFrame(measureFPS);
       selectable: false,
     });
     canvas.add(mannequin);
+    mannequin.layerType = "mannequin";
+    mannequinRef.current = mannequin;
 
     // Placeholder "garment boundary" — stand-in for a real SVG template
     // from Pair 3. Visible as a dashed outline; not selectable/drawable on.
@@ -87,6 +178,7 @@ animationFrameId = requestAnimationFrame(measureFPS);
     });
     canvas.add(garmentBoundary);
     garmentBoundaryRef.current = garmentBoundary;
+    garmentBoundary.layerType = "boundary";
 
     canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
 
@@ -116,6 +208,95 @@ animationFrameId = requestAnimationFrame(measureFPS);
   canvas.dispose();
 };
   }, []);
+  useEffect(() => {
+    const canvas = fabricCanvasRef.current;
+
+    if (!canvas || !selectedGarment) return;
+
+    const category = selectedGarment.category;
+    const color = GARMENT_COLORS[category];
+
+    if (!color) return;
+
+    const width = getMannequinWidth(frame, bodyType);
+    const bounds = getGarmentBounds(category, width);
+
+    // Replace only the previous garment in this category.
+    const existing = equippedGarmentsRef.current[category];
+
+    if (existing) {
+      canvas.remove(existing);
+    }
+
+    const garment = new fabric.Rect({
+      ...bounds,
+      fill: color,
+      stroke: "#555",
+      strokeWidth: 1,
+      selectable: false,
+      evented: false,
+    });
+
+    garment.layerType = category;
+
+    canvas.add(garment);
+    equippedGarmentsRef.current[category] = garment;
+
+    // Update the boundary for future brush strokes.
+    const boundary = garmentBoundaryRef.current;
+
+    if (boundary) {
+      boundary.set(bounds);
+      boundary.setCoords();
+    }
+
+    sortCanvasLayers(canvas);
+  }, [selectedGarment]);
+  useEffect(() => {
+    const canvas = fabricCanvasRef.current;
+    const mannequin = mannequinRef.current;
+
+    if (!canvas || !mannequin) return;
+
+    const width = getMannequinWidth(frame, bodyType);
+
+    // Update the existing mannequin rather than clearing canvas.
+    mannequin.set({
+      left: 300 - width / 2,
+      width,
+    });
+
+    mannequin.setCoords();
+
+    // Reposition clothing to fit the newly selected body.
+    Object.entries(equippedGarmentsRef.current).forEach(
+      ([category, garment]) => {
+        const bounds = getGarmentBounds(category, width);
+
+        if (bounds) {
+          garment.set(bounds);
+          garment.setCoords();
+        }
+      }
+    );
+
+    // Keep the active drawing boundary aligned.
+    if (selectedGarment && garmentBoundaryRef.current) {
+      const bounds = getGarmentBounds(
+        selectedGarment.category,
+        width
+      );
+
+      if (bounds) {
+        garmentBoundaryRef.current.set(bounds);
+        garmentBoundaryRef.current.setCoords();
+      }
+    }
+
+    sortCanvasLayers(canvas);
+  }, [frame, bodyType, selectedGarment]);
+
+
 
   // Keep the brush in sync with the controls
   useEffect(() => {
