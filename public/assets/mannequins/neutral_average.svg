@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 400" width="200" height="400">
+  <!-- Head -->
+  <circle cx="100" cy="45" r="24" fill="#d1d5db" stroke="#9ca3af" stroke-width="2" />
+  
+  <!-- Neck -->
+  <rect x="95" y="69" width="10" height="15" fill="#d1d5db" />
+  
+  <!-- Torso -->
+  <path d="M 62 84 L 138 84 L 124 195 L 76 195 Z" fill="#e5e7eb" stroke="#9ca3af" stroke-width="2" />
+  
+  <!-- Left Arm -->
+  <path d="M 58 86 L 44 190 L 52 192 L 64 92 Z" fill="#d1d5db" stroke="#9ca3af" stroke-width="1.5" />
+  <!-- Right Arm -->
+  <path d="M 142 86 L 156 190 L 148 192 L 136 92 Z" fill="#d1d5db" stroke="#9ca3af" stroke-width="1.5" />
+  
+  <!-- Pelvis -->
+  <path d="M 76 195 L 124 195 L 130 235 L 70 235 Z" fill="#e5e7eb" stroke="#9ca3af" stroke-width="2" />
+  
+  <!-- Legs -->
+  <rect x="75" y="235" width="20" height="145" rx="6" fill="#d1d5db" stroke="#9ca3af" stroke-width="2" />
+  <rect x="105" y="235" width="20" height="145" rx="6" fill="#d1d5db" stroke="#9ca3af" stroke-width="2" />
+</svg>
