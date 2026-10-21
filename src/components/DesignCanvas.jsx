@@ -1,21 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import * as fabric from "fabric";
 
-
-
-export default function DesignCanvas() {
+export default function DesignCanvas({
+  selectedGarment,
+  frame,
+  bodyType,
+  onRegisterCanvas,
+  loadedCanvasData,
+}) {
   const canvasElRef = useRef(null);
   const fabricCanvasRef = useRef(null);
-  const garmentBoundaryRef = useRef(null); // holds the current clip shape
+  const garmentBoundaryRef = useRef(null);
 
   // Tracks the frames for our FPS counter
-const fpsRef = useRef({
-  frames: 0,
-  lastTime: 0,
-});
+  const fpsRef = useRef({
+    frames: 0,
+    lastTime: 0,
+  });
 
-const [fps, setFps] = useState(0);
-
+  const [fps, setFps] = useState(0);
   const [strokeWidth, setStrokeWidth] = useState(5);
   const [strokeColor, setStrokeColor] = useState("#ff0000");
   const [opacity, setOpacity] = useState(1);
@@ -29,38 +32,37 @@ const [fps, setFps] = useState(0);
       width: 600,
       height: 800,
       backgroundColor: CANVAS_BG,
-      
     });
     fabricCanvasRef.current = canvas;
 
-    
-// Measures the browser's animation frame rate
-let animationFrameId;
+    // Expose canvas serializer to App.jsx for LocalStorage saves
+    if (onRegisterCanvas) {
+      onRegisterCanvas({
+        getCanvasJSON: () => canvas.toJSON(),
+      });
+    }
 
-const measureFPS = (time) => {
-  const tracker = fpsRef.current;
+    // Measures the browser's animation frame rate
+    let animationFrameId;
 
-  if (tracker.lastTime === 0) {
-    tracker.lastTime = time;
-  }
+    const measureFPS = (time) => {
+      const tracker = fpsRef.current;
+      if (tracker.lastTime === 0) {
+        tracker.lastTime = time;
+      }
+      tracker.frames++;
+      const elapsed = time - tracker.lastTime;
 
-  tracker.frames++;
+      if (elapsed >= 1000) {
+        setFps(Math.round((tracker.frames * 1000) / elapsed));
+        tracker.frames = 0;
+        tracker.lastTime = time;
+      }
 
-  const elapsed = time - tracker.lastTime;
+      animationFrameId = requestAnimationFrame(measureFPS);
+    };
 
-  // Update the FPS every second
-  if (elapsed >= 1000) {
-    setFps(Math.round((tracker.frames * 1000) / elapsed));
-
-    tracker.frames = 0;
-    tracker.lastTime = time;
-  }
-
-  animationFrameId = requestAnimationFrame(measureFPS);
-};
-
-animationFrameId = requestAnimationFrame(measureFPS);
-
+    animationFrameId = requestAnimationFrame(measureFPS);
 
     const mannequin = new fabric.Rect({
       left: 200,
@@ -72,8 +74,7 @@ animationFrameId = requestAnimationFrame(measureFPS);
     });
     canvas.add(mannequin);
 
-    // Placeholder "garment boundary" — stand-in for a real SVG template
-    // from Pair 3. Visible as a dashed outline; not selectable/drawable on.
+    // Placeholder garment boundary
     const garmentBoundary = new fabric.Rect({
       left: 220,
       top: 270,
@@ -89,10 +90,8 @@ animationFrameId = requestAnimationFrame(measureFPS);
     garmentBoundaryRef.current = garmentBoundary;
 
     canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-
     canvas.freeDrawingBrush.decimate = 2;
     canvas.isDrawingMode = true;
-   
 
     // Clip every new freehand stroke to the garment boundary shape
     const handlePathCreated = async (e) => {
@@ -102,7 +101,7 @@ animationFrameId = requestAnimationFrame(measureFPS);
 
       const clip = await boundary.clone();
       clip.set({
-        absolutePositioned: true, // use canvas coords, not the path's local coords
+        absolutePositioned: true,
       });
       path.clipPath = clip;
       canvas.requestRenderAll();
@@ -110,12 +109,23 @@ animationFrameId = requestAnimationFrame(measureFPS);
 
     canvas.on("path:created", handlePathCreated);
 
-  return () => {
-  cancelAnimationFrame(animationFrameId);
-  canvas.off("path:created", handlePathCreated);
-  canvas.dispose();
-};
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      canvas.off("path:created", handlePathCreated);
+      canvas.dispose();
+    };
   }, []);
+
+  // Restore canvas paths when a saved outfit is loaded
+  useEffect(() => {
+    const canvas = fabricCanvasRef.current;
+    if (!canvas || !loadedCanvasData) return;
+
+    // Load serialized drawing objects back onto the canvas
+    canvas.loadFromJSON(loadedCanvasData, () => {
+      canvas.requestRenderAll();
+    });
+  }, [loadedCanvasData]);
 
   // Keep the brush in sync with the controls
   useEffect(() => {
@@ -172,7 +182,7 @@ animationFrameId = requestAnimationFrame(measureFPS);
           />
         </label>
 
-                 <button onClick={() => setIsEraser((prev) => !prev)}>
+        <button onClick={() => setIsEraser((prev) => !prev)}>
           {isEraser ? "Switch to Brush" : "Switch to Eraser"}
         </button>
       </div>
