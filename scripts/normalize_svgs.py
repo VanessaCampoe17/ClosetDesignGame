@@ -1,12 +1,11 @@
 import os
 import re
+import glob
 import xml.etree.ElementTree as ET
 
-# Canvas configuration matching the team's Fabric.js canvas
 TARGET_CANVAS_WIDTH = 500
 TARGET_CANVAS_HEIGHT = 800
 
-# Target anchor coordinates matching clothingCatalog.json
 ANCHOR_CONFIG = {
     "bottoms": {"x": 250, "y": 350, "target_width": 220},
     "tops": {"x": 250, "y": 215, "target_width": 220},
@@ -17,7 +16,6 @@ ANCHOR_CONFIG = {
 }
 
 def get_dimensions(root):
-    """Extracts bounding coordinates and dimensions from SVG viewBox or width/height."""
     viewbox = root.attrib.get("viewBox") or root.attrib.get("viewbox")
     if viewbox:
         parts = [float(p) for p in re.split(r"[\s,]+", viewbox.strip()) if p]
@@ -30,34 +28,49 @@ def get_dimensions(root):
     h = float(re.findall(r"[\d.]+", h_str)[0])
     return 0.0, 0.0, w, h
 
-def normalize_svg(input_path, output_path, category="bottoms"):
-    """Scales, centers, and wraps the SVG into the standard 500x800 viewBox."""
-    config = ANCHOR_CONFIG.get(category, ANCHOR_CONFIG["bottoms"])
-
-    # Register default namespace without prefix
+def normalize_mannequin(input_path, output_path):
+    """Standardizes mannequin silhouette viewBox, dimensions, and layer structure."""
     ET.register_namespace("", "http://www.w3.org/2000/svg")
-
     tree = ET.parse(input_path)
     root = tree.getroot()
 
-    min_x, min_y, raw_w, raw_h = get_dimensions(root)
-
-    # Uniform scale factor
-    scale = config["target_width"] / raw_w
-    scaled_w = raw_w * scale
-
-    # Align horizontally to center line and vertically to target anchor
-    translate_x = config["x"] - (scaled_w / 2.0) - (min_x * scale)
-    translate_y = config["y"] - (min_y * scale)
-
-    # Note: Do not pass xmlns manually in the dict; register_namespace handles it cleanly
     new_root = ET.Element("svg", {
         "viewBox": f"0 0 {TARGET_CANVAS_WIDTH} {TARGET_CANVAS_HEIGHT}",
         "width": str(TARGET_CANVAS_WIDTH),
         "height": str(TARGET_CANVAS_HEIGHT)
     })
 
-    # Wrap elements into normalized group
+    wrapper = ET.SubElement(new_root, "g", {
+        "id": "normalized-mannequin-layer"
+    })
+
+    for child in list(root):
+        wrapper.append(child)
+
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    ET.ElementTree(new_root).write(output_path, encoding="utf-8", xml_declaration=True)
+    print(f"Success! Normalized Mannequin: {output_path}")
+
+def normalize_svg(input_path, output_path, category="bottoms"):
+    config = ANCHOR_CONFIG.get(category, ANCHOR_CONFIG["bottoms"])
+    ET.register_namespace("", "http://www.w3.org/2000/svg")
+
+    tree = ET.parse(input_path)
+    root = tree.getroot()
+
+    min_x, min_y, raw_w, raw_h = get_dimensions(root)
+    scale = config["target_width"] / raw_w
+    scaled_w = raw_w * scale
+
+    translate_x = config["x"] - (scaled_w / 2.0) - (min_x * scale)
+    translate_y = config["y"] - (min_y * scale)
+
+    new_root = ET.Element("svg", {
+        "viewBox": f"0 0 {TARGET_CANVAS_WIDTH} {TARGET_CANVAS_HEIGHT}",
+        "width": str(TARGET_CANVAS_WIDTH),
+        "height": str(TARGET_CANVAS_HEIGHT)
+    })
+
     wrapper = ET.SubElement(new_root, "g", {
         "id": "normalized-garment-layer",
         "transform": f"matrix({scale:.4f} 0 0 {scale:.4f} {translate_x:.4f} {translate_y:.4f})"
@@ -68,13 +81,18 @@ def normalize_svg(input_path, output_path, category="bottoms"):
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     ET.ElementTree(new_root).write(output_path, encoding="utf-8", xml_declaration=True)
-    print(f"Success! Normalized: {output_path}")
+    print(f"Success! Normalized Garment: {output_path}")
 
 if __name__ == "__main__":
-    raw_file = "raw_assets/harajuku_skirt_raw.svg"
-    clean_output = "public/assets/garments/1990s/harajuku_skirt.svg"
-    
-    if os.path.exists(raw_file):
-        normalize_svg(raw_file, clean_output, category="bottoms")
-    else:
-        print(f"Error: {raw_file} not found.")
+    # 1. Process garments if present
+    raw_garment = "raw_assets/harajuku_skirt_raw.svg"
+    clean_garment = "public/assets/garments/1990s/harajuku_skirt.svg"
+    if os.path.exists(raw_garment):
+        normalize_svg(raw_garment, clean_garment, category="bottoms")
+
+    # 2. Process all mannequin assets
+    mannequin_files = glob.glob("raw_assets/mannequins/*.svg")
+    for m_file in mannequin_files:
+        base_name = os.path.basename(m_file)
+        dest_path = os.path.join("public/assets/mannequins", base_name)
+        normalize_mannequin(m_file, dest_path)

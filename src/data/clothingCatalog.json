@@ -1,5 +1,22 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
+  "mannequins": {
+    "feminine": {
+      "slim": "/assets/mannequins/feminine_slim.svg",
+      "average": "/assets/mannequins/feminine_average.svg",
+      "broad": "/assets/mannequins/feminine_broad.svg"
+    },
+    "masculine": {
+      "slim": "/assets/mannequins/masculine_slim.svg",
+      "average": "/assets/mannequins/masculine_average.svg",
+      "broad": "/assets/mannequins/masculine_broad.svg"
+    },
+    "neutral": {
+      "slim": "/assets/mannequins/neutral_slim.svg",
+      "average": "/assets/mannequins/neutral_average.svg",
+      "broad": "/assets/mannequins/neutral_broad.svg"
+    }
+  },
   "items": [
     {
       "id": "1890s-eu-victorian-corset-01",
