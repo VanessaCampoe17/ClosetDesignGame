@@ -13,6 +13,7 @@ import {
 
 import DesignCanvas from "./components/DesignCanvas";
 import clothingCatalog from "./data/clothingCatalog.json";
+import { getCanvasGarmentIds } from "./utils/canvasSerialization";
 
 function App() {
   const [eraOpen, setEraOpen] = useState(false);
@@ -48,10 +49,11 @@ function App() {
     };
 
     // Serialize Fabric canvas drawings if available
-    const canvasJSON = canvasInterfaceRef.current?.getCanvasJSON() || null;
+    const garmentIds = selectedGarment ? [selectedGarment.id] : [];
+    const canvasJSON =
+      canvasInterfaceRef.current?.getCanvasJSON(garmentIds) || null;
 
     const canvasPayload = {
-      selectedGarment: selectedGarment,
       drawingJSON: canvasJSON,
     };
 
@@ -64,11 +66,19 @@ function App() {
   const handleLoadOutfit = (outfit) => {
     if (outfit.frame) setSelectedFrame(outfit.frame);
     if (outfit.bodyType) setSelectedBodyType(outfit.bodyType);
-    if (outfit.canvasState?.selectedGarment) {
-      setSelectedGarment(outfit.canvasState.selectedGarment);
-    }
-    if (outfit.canvasState?.drawingJSON) {
-      setLoadedCanvasData(outfit.canvasState.drawingJSON);
+    const canvasState = outfit.canvasState || {};
+    const legacyGarment = canvasState.selectedGarment;
+    const savedGarmentId =
+      (canvasState.drawingJSON
+        ? getCanvasGarmentIds(canvasState.drawingJSON)[0]
+        : null) || legacyGarment?.id;
+    setSelectedGarment(
+      savedGarmentId
+        ? clothingCatalog.items.find((item) => item.id === savedGarmentId) || null
+        : null,
+    );
+    if (canvasState.drawingJSON) {
+      setLoadedCanvasData(canvasState.drawingJSON);
     }
   };
 

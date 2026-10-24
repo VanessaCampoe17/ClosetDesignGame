@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import * as fabric from "fabric";
+import { restoreCanvas, serializeCanvas } from "../utils/canvasSerialization";
 
 export default function DesignCanvas({
-  selectedGarment,
-  frame,
-  bodyType,
   onRegisterCanvas,
   loadedCanvasData,
 }) {
@@ -38,7 +36,7 @@ export default function DesignCanvas({
     // Expose canvas serializer to App.jsx for LocalStorage saves
     if (onRegisterCanvas) {
       onRegisterCanvas({
-        getCanvasJSON: () => canvas.toJSON(),
+        getCanvasJSON: (garmentIds) => serializeCanvas(canvas, garmentIds),
       });
     }
 
@@ -83,6 +81,7 @@ export default function DesignCanvas({
       fill: "transparent",
       stroke: "#888",
       strokeDashArray: [5, 5],
+      data: { role: "garment-boundary" },
       selectable: false,
       evented: false,
     });
@@ -116,15 +115,34 @@ export default function DesignCanvas({
     };
   }, []);
 
-  // Restore canvas paths when a saved outfit is loaded
+  // Restore canvas objects and layers when a saved outfit is loaded
   useEffect(() => {
     const canvas = fabricCanvasRef.current;
     if (!canvas || !loadedCanvasData) return;
 
-    // Load serialized drawing objects back onto the canvas
-    canvas.loadFromJSON(loadedCanvasData, () => {
-      canvas.requestRenderAll();
-    });
+    let isCurrent = true;
+
+    restoreCanvas(canvas, loadedCanvasData)
+      .then(() => {
+        if (!isCurrent) return;
+
+        garmentBoundaryRef.current =
+          canvas.getObjects().find((object) => object.data?.role === "garment-boundary") ||
+          canvas.getObjects().find(
+            (object) =>
+              object.type === "rect" &&
+              object.stroke === "#888" &&
+              Array.isArray(object.strokeDashArray),
+          ) ||
+          null;
+      })
+      .catch((error) => {
+        console.error("Failed to restore saved canvas:", error);
+      });
+
+    return () => {
+      isCurrent = false;
+    };
   }, [loadedCanvasData]);
 
   // Keep the brush in sync with the controls
