@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="600" height="800">
+  <!-- 1890s Victorian Tailored Corset Bodice -->
+  <g id="victorian-corset-bodice" fill="#8B263E" stroke="#4A121A" stroke-width="2" stroke-linejoin="round">
+    <!-- Main Bodice Torso -->
+    <path d="M 230 220 
+             C 240 235, 260 235, 270 220 
+             L 285 245 
+             C 280 280, 275 310, 280 340 
+             C 265 355, 235 355, 220 340 
+             C 225 310, 220 280, 215 245 
+             Z" />
+    
+    <!-- Boning & Seam Lines -->
+    <path d="M 250 227 L 250 348" stroke="#4A121A" stroke-width="1.5" fill="none" />
+    <path d="M 238 232 C 240 270, 238 310, 234 344" stroke="#4A121A" stroke-width="1.5" fill="none" />
+    <path d="M 262 232 C 260 270, 262 310, 266 344" stroke="#4A121A" stroke-width="1.5" fill="none" />
+    
+    <!-- Lace Trim Accents -->
+    <path d="M 230 220 C 240 226, 260 226, 270 220" stroke="#F4E8C1" stroke-width="2" fill="none" />
+    <path d="M 220 340 C 235 348, 265 348, 280 340" stroke="#F4E8C1" stroke-width="2" fill="none" />
+  </g>
+</svg>

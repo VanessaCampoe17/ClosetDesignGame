@@ -25,7 +25,7 @@
       "region": "Europe",
       "category": "tops",
       "targetFrame": "feminine",
-      "svgPath": "/assets/garments/1890s/victorian_bodice.svg",
+      "svgPath": "/assets/garments/1890s/victorian_corset_bodice.svg",
       "defaultZIndex": 25,
       "anchorCoords": { "x": 250, "y": 230 }
     },
@@ -36,7 +36,7 @@
       "region": "North America",
       "category": "tops",
       "targetFrame": "masculine",
-      "svgPath": "/assets/garments/1950s/leather_jacket.svg",
+      "svgPath": "/assets/garments/1950s/classic_biker_leather_jacket.svg",
       "defaultZIndex": 35,
       "anchorCoords": { "x": 250, "y": 215 }
     },
