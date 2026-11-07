@@ -291,7 +291,7 @@ useEffect(() => {
             onChange={(e) => setStrokeWidth(Number(e.target.value))}
           />
         </label>
-        <label className="flex items-center gap-2 text-sm">
+<label className="flex items-center gap-2 text-sm">
           Color:
           <input
             type="color"
@@ -300,7 +300,7 @@ useEffect(() => {
             disabled={isEraser}
           />
         </label>
-        <label className="flex flex-wrap items-center gap-2 text-sm">
+<label className="flex flex-wrap items-center gap-2 text-sm">
           Opacity: {opacity.toFixed(2)}
           <input
             type="range"
@@ -312,15 +312,27 @@ useEffect(() => {
             disabled={isEraser}
           />
         </label>
-        <button type="button" className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium hover:bg-gray-100" onClick={() => setIsEraser((prev) => !prev)}>
+        <button
+          type="button"
+          className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          onClick={() => setIsEraser((prev) => !prev)}
+        >
           {isEraser ? "Switch to Brush" : "Switch to Eraser"}
         </button>
       </div>
+
       <div className="mb-3 text-sm">
         <strong>FPS: {fps}</strong>
       </div>
-      <div ref={canvasContainerRef} className="w-full max-w-[600px] overflow-hidden rounded-lg">
-        <canvas ref={canvasElRef} aria-label="Outfit design drawing canvas" />
+
+      <div
+        ref={canvasContainerRef}
+        className="w-full max-w-[600px] overflow-hidden rounded-lg"
+      >
+        <canvas
+          ref={canvasElRef}
+          aria-label="Outfit design drawing canvas"
+        />
       </div>
     </div>
   );
