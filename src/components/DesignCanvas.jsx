@@ -34,6 +34,7 @@ export default function DesignCanvas({
   loadedCanvasData,
 }) {
   const canvasElRef = useRef(null);
+  const canvasContainerRef = useRef(null);
   const fabricCanvasRef = useRef(null);
   const garmentBoundaryRef = useRef(null);
   const fpsRef = useRef({ frames: 0, lastTime: 0 });
@@ -118,6 +119,24 @@ export default function DesignCanvas({
       garmentBoundaryRef.current = null;
       canvas.dispose();
     };
+  }, []);
+
+  // Keep Fabric's logical 600x800 drawing area while scaling its display on narrow screens.
+  useEffect(() => {
+    const container = canvasContainerRef.current;
+    if (!container) return;
+    const resizeCanvas = () => {
+      const canvas = fabricCanvasRef.current;
+      if (!canvas) return;
+      const width = Math.min(600, container.clientWidth);
+      if (width <= 0) return;
+      canvas.setDimensions({ width: `${width}px`, height: `${(width * 800) / 600}px` }, { cssOnly: true });
+      canvas.calcOffset();
+    };
+    const observer = new ResizeObserver(resizeCanvas);
+    observer.observe(container);
+    resizeCanvas();
+    return () => observer.disconnect();
   }, []);
 
   // Load the selected mannequin SVG
@@ -261,8 +280,8 @@ useEffect(() => {
 
   return (
     <div>
-      <div style={{ marginBottom: 10, display: "flex", gap: 16, alignItems: "center" }}>
-        <label>
+      <div className="mb-3 flex flex-wrap items-center gap-3 sm:gap-4">
+        <label className="flex flex-wrap items-center gap-2 text-sm">
           Width: {strokeWidth}
           <input
             type="range"
@@ -272,7 +291,7 @@ useEffect(() => {
             onChange={(e) => setStrokeWidth(Number(e.target.value))}
           />
         </label>
-        <label>
+<label className="flex items-center gap-2 text-sm">
           Color:
           <input
             type="color"
@@ -281,7 +300,7 @@ useEffect(() => {
             disabled={isEraser}
           />
         </label>
-        <label>
+<label className="flex flex-wrap items-center gap-2 text-sm">
           Opacity: {opacity.toFixed(2)}
           <input
             type="range"
@@ -293,14 +312,28 @@ useEffect(() => {
             disabled={isEraser}
           />
         </label>
-        <button onClick={() => setIsEraser((prev) => !prev)}>
+        <button
+          type="button"
+          className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          onClick={() => setIsEraser((prev) => !prev)}
+        >
           {isEraser ? "Switch to Brush" : "Switch to Eraser"}
         </button>
       </div>
-      <div style={{ marginBottom: 10 }}>
+
+      <div className="mb-3 text-sm">
         <strong>FPS: {fps}</strong>
       </div>
-      <canvas ref={canvasElRef} />
+
+      <div
+        ref={canvasContainerRef}
+        className="w-full max-w-[600px] overflow-hidden rounded-lg"
+      >
+        <canvas
+          ref={canvasElRef}
+          aria-label="Outfit design drawing canvas"
+        />
+      </div>
     </div>
   );
 }
