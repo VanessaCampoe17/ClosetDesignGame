@@ -119,10 +119,10 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900">
       {/* Top navigation bar */}
-      <nav className="flex h-16 items-center justify-between bg-white px-6 shadow-sm">
+      <nav className="flex min-h-16 flex-wrap items-center justify-between gap-2 bg-white px-4 py-3 shadow-sm sm:px-6">
         <div className="flex items-center gap-3">
           <Shirt size={28} />
-          <h1 className="text-xl font-bold">Closet Design Game</h1>
+          <h1 className="text-lg font-bold sm:text-xl">Closet Design Game</h1>
         </div>
 
         <div className="text-sm text-gray-500">
@@ -130,9 +130,9 @@ function App() {
         </div>
       </nav>
 
-      <div className="flex">
+      <div className="flex flex-col lg:flex-row">
         {/* Studio sidebar */}
-        <aside className="min-h-[calc(100vh-4rem)] w-64 border-r bg-white p-4">
+        <aside className="w-full shrink-0 border-b bg-white p-4 lg:min-h-[calc(100vh-4rem)] lg:w-72 lg:border-b-0 lg:border-r">
           <h2 className="mb-4 text-lg font-semibold">
             Clothing Studio
           </h2>
@@ -343,7 +343,7 @@ function App() {
         </aside>
 
         {/* Main design area */}
-        <main className="flex flex-1 flex-col items-center overflow-auto p-6">
+        <main className="flex min-w-0 flex-1 flex-col items-center p-3 sm:p-6">
           <div className="mb-4 w-full max-w-4xl">
             <h2 className="text-2xl font-bold">
               Design Studio
@@ -355,7 +355,7 @@ function App() {
             </p>
           </div>
 
-          <div className="rounded-xl bg-white p-5 shadow">
+          <div className="w-full max-w-[680px] min-w-0 rounded-xl bg-white p-3 shadow sm:p-5">
             <DesignCanvas
               selectedGarment={selectedGarment}
               frame={selectedFrame}
