@@ -84,13 +84,22 @@ def normalize_svg(input_path, output_path, category="bottoms"):
     print(f"Success! Normalized Garment: {output_path}")
 
 if __name__ == "__main__":
-    # 1. Process garments if present
-    raw_garment = "raw_assets/harajuku_skirt_raw.svg"
-    clean_garment = "public/assets/garments/1990s/harajuku_skirt.svg"
-    if os.path.exists(raw_garment):
-        normalize_svg(raw_garment, clean_garment, category="bottoms")
+    garment_batch = [
+        ("raw_assets/garments/edwardian_walking_skirt_raw.svg", "public/assets/garments/1890s/edwardian_walking_skirt.svg", "bottoms"),
+        ("raw_assets/garments/victorian_boater_hat_raw.svg", "public/assets/garments/1890s/victorian_boater_hat.svg", "headwear"),
+        ("raw_assets/garments/poodle_skirt_raw.svg", "public/assets/garments/1950s/poodle_skirt.svg", "bottoms"),
+        ("raw_assets/garments/vintage_pillbox_hat_raw.svg", "public/assets/garments/1950s/vintage_pillbox_hat.svg", "headwear"),
+        ("raw_assets/garments/colorblock_windbreaker_raw.svg", "public/assets/garments/1990s/colorblock_windbreaker.svg", "tops"),
+        ("raw_assets/garments/harajuku_bucket_hat_raw.svg", "public/assets/garments/1990s/harajuku_bucket_hat.svg", "headwear"),
+    ]
 
-    # 2. Process all mannequin assets
+    for raw_path, clean_path, cat in garment_batch:
+        if os.path.exists(raw_path):
+            normalize_svg(raw_path, clean_path, category=cat)
+        else:
+            print(f"Skipping missing file: {raw_path}")
+
+    # Process all mannequin assets
     mannequin_files = glob.glob("raw_assets/mannequins/*.svg")
     for m_file in mannequin_files:
         base_name = os.path.basename(m_file)

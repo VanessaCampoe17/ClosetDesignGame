@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 145">
+  <!-- Jacket Torso & Sleeves -->
+  <path d="M62,10 L158,10 L212,68 L192,86 L166,56 L166,138 L54,138 L54,56 L28,86 L8,68 Z" fill="#1abc9c" stroke="#111111" stroke-width="2.5" />
+  <!-- 90s Colorblock Panels (Purple & Neon Yellow) -->
+  <polygon points="54,56 110,92 166,56 166,102 54,102" fill="#8e44ad" />
+  <polygon points="54,102 166,102 166,138 54,138" fill="#f1c40f" />
+  <!-- High Funnel Collar -->
+  <rect x="76" y="0" width="68" height="14" rx="2" fill="#8e44ad" stroke="#111111" stroke-width="2" />
+  <!-- Center Zipper -->
+  <line x1="110" y1="0" x2="110" y2="138" stroke="#111111" stroke-width="2.5" />
+</svg>
