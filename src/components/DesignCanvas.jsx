@@ -33,6 +33,12 @@ const GARMENT_FIT = {
     width: 90,
     height: 55,
   },
+    headwear: {
+    x: 300,
+    y: 60,
+    width: 95,
+    height: 50,
+  },
 };
 
 //UPDATED (Increment 2): Body measurements from the mannequin SVGs.

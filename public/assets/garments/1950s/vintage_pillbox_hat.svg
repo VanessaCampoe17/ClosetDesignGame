@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 800" width="500" height="800"><g id="normalized-garment-layer" transform="matrix(1.0000 0 0 1.0000 180.0000 120.0000)"><path d="M32,22 Q70,14 108,22 L112,46 Q70,54 28,46 Z" fill="#c0392b" stroke="#78281f" stroke-width="2" />
+  
+  <ellipse cx="70" cy="22" rx="38" ry="7" fill="#e74c3c" stroke="#78281f" stroke-width="1.5" />
+  
+  <path d="M98,34 L112,27 L112,41 Z M98,34 L86,27 L86,41 Z" fill="#f5b7b1" stroke="#78281f" stroke-width="1.5" />
+  
+  <path d="M28,46 Q70,64 112,46" stroke="#2c3e50" stroke-width="1.2" stroke-dasharray="2,3" fill="none" />
+</g></svg>

@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 800" width="500" height="800"><g id="normalized-garment-layer" transform="matrix(1.0000 0 0 1.0000 180.0000 120.0000)"><path d="M40,12 Q70,6 100,12 L108,38 L32,38 Z" fill="#ff69b4" stroke="#880e4f" stroke-width="2" />
+  
+  <path d="M32,38 L108,38 L128,54 Q70,62 12,54 Z" fill="#ff85c0" stroke="#880e4f" stroke-width="2" />
+  
+  <path d="M22,46 Q70,53 118,46" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="4,3" fill="none" />
+  
+  <circle cx="54" cy="26" r="6" fill="#ffeb3b" stroke="#111111" stroke-width="1.2" />
+</g></svg>

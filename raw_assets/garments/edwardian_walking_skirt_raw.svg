@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 260">
+  <!-- Waistband -->
+  <path d="M68,0 L152,0 L156,16 L64,16 Z" fill="#2c3e50" stroke="#1a252f" stroke-width="2" />
+  <!-- A-line Floor-length Skirt Body -->
+  <path d="M64,16 L156,16 L205,250 Q110,262 15,250 Z" fill="#34495e" stroke="#1a252f" stroke-width="2.5" />
+  <!-- Vertical Pleat Folds -->
+  <path d="M88,16 L70,253 M110,16 L110,256 M132,16 L150,253" stroke="#1a252f" stroke-width="2" fill="none" />
+  <!-- Hem Trim -->
+  <path d="M18,236 Q110,248 202,236" stroke="#95a5a6" stroke-width="3" fill="none" />
+</svg>
