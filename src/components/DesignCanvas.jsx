@@ -140,7 +140,119 @@ async function loadSVG(path) {
 
   return fabric.util.groupSVGElements(objects, result.options);
 }
-  //Uses the clothing shape for drawing clips.
+
+
+// Week 9: Render the outfit as a clean, flattened PNG.
+// Uses an offscreen Fabric canvas so the editor stays unchanged.
+async function renderOutfitOffscreen(canvas, backgroundColor = "#ffffff") {
+  if (!canvas) {
+    throw new Error("Canvas is not ready");
+  }
+
+  const width = canvas.getWidth();
+  const height = canvas.getHeight();
+
+  const offscreen = new fabric.StaticCanvas(null, {
+    width,
+    height,
+    backgroundColor,
+    renderOnAddRemove: false,
+  });
+
+  try {
+    const visibleObjects = canvas.getObjects().filter((object) => {
+      return (
+        object.visible !== false &&
+        object.data?.role !== "garment-boundary" &&
+        object.data?.layerType !== "boundary"
+      );
+    });
+
+    // Clone objects so the live editor is never modified.
+    // Cloning also preserves Fabric clip paths.
+    const clones = await Promise.all(
+      visibleObjects.map((object) => object.clone())
+    );
+
+    clones.forEach((clone) => {
+      clone.set({
+        selectable: false,
+        evented: false,
+        hasControls: false,
+        hasBorders: false,
+      });
+
+      offscreen.add(clone);
+    });
+
+    offscreen.renderAll();
+
+    return offscreen.toDataURL({
+      format: "png",
+      multiplier: 1,
+    });
+  } finally {
+    await offscreen.dispose();
+  }
+}
+
+
+// Erase pixels from paint only. Garments/mannequins are never rasterized.
+// Each affected paint object is cropped to its own bounds to limit memory use.
+async function erasePaintObject(paint, eraser, canvasWidth, canvasHeight) {
+  const bounds = paint.getBoundingRect();
+  const left = Math.max(0, Math.floor(bounds.left - 3));
+  const top = Math.max(0, Math.floor(bounds.top - 3));
+  const right = Math.min(canvasWidth, Math.ceil(bounds.left + bounds.width + 3));
+  const bottom = Math.min(canvasHeight, Math.ceil(bounds.top + bounds.height + 3));
+  if (right <= left || bottom <= top) return null;
+
+  const source = new fabric.StaticCanvas(null, {
+    width: canvasWidth, height: canvasHeight, renderOnAddRemove: false,
+  });
+  const mask = new fabric.StaticCanvas(null, {
+    width: canvasWidth, height: canvasHeight, renderOnAddRemove: false,
+  });
+  try {
+    const paintCopy = await paint.clone();
+    const eraseCopy = await eraser.clone();
+    eraseCopy.set({
+      clipPath: undefined,
+      fill: null, // An eraser must be a line, not a filled path.
+      stroke: '#000000',
+      opacity: 1,
+      globalCompositeOperation: 'source-over',
+    });
+    source.add(paintCopy);
+    mask.add(eraseCopy);
+    source.renderAll();
+    mask.renderAll();
+
+    const pixels = document.createElement('canvas');
+    pixels.width = right - left;
+    pixels.height = bottom - top;
+    const ctx = pixels.getContext('2d');
+    ctx.drawImage(source.lowerCanvasEl, left, top, pixels.width, pixels.height,
+      0, 0, pixels.width, pixels.height);
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.drawImage(mask.lowerCanvasEl, left, top, pixels.width, pixels.height,
+      0, 0, pixels.width, pixels.height);
+    ctx.globalCompositeOperation = 'source-over';
+
+    const replacement = await fabric.FabricImage.fromURL(pixels.toDataURL('image/png'));
+    replacement.set({
+      left, top, originX: 'left', originY: 'top',
+      selectable: false, evented: false,
+      data: { ...paint.data },
+    });
+    replacement.setCoords();
+    return replacement;
+  } finally {
+    await Promise.all([source.dispose(), mask.dispose()]);
+  }
+}
+
+//Uses the clothing shape for drawing clips.
 async function makeGarmentClip(garment) {
   const clip = await garment.clone();
 
@@ -207,6 +319,27 @@ export default function DesignCanvas({
  //Keeps track of drawing history.
   const undoStackRef = useRef([]);
   const redoStackRef = useRef([]);
+  const eraseQueueRef = useRef(Promise.resolve());
+
+
+const MAX_HISTORY = 50;
+
+// Prevent old actions from accumulating indefinitely.
+function saveHistory(action) {
+  undoStackRef.current.push(action);
+
+  if (undoStackRef.current.length > MAX_HISTORY) {
+    undoStackRef.current.splice(
+      0,
+      undoStackRef.current.length - MAX_HISTORY
+    );
+  }
+
+  // A new action clears the redo history.
+  redoStackRef.current = [];
+  setHistoryVersion((previous) => previous + 1);
+}
+
 
   //Updates the undo/redo buttons.
   const [historyVersion, setHistoryVersion] = useState(0);
@@ -227,6 +360,12 @@ export default function DesignCanvas({
   const [opacity, setOpacity] = useState(1);
   const [isEraser, setIsEraser] = useState(false);
 
+  const isEraserRef = useRef(false);
+
+useEffect(() => {
+  isEraserRef.current = isEraser;
+}, [isEraser]);
+
   const CANVAS_BG = "#f5f5f5";
 
   useEffect(() => {
@@ -237,11 +376,16 @@ export default function DesignCanvas({
     });
     fabricCanvasRef.current = canvas;
 
-    if (onRegisterCanvas) {
-      onRegisterCanvas({
-        getCanvasJSON: (garmentIds) => serializeCanvas(canvas, garmentIds),
-      });
-    }
+if (onRegisterCanvas) {
+  onRegisterCanvas({
+    getCanvasJSON: (garmentIds) => serializeCanvas(canvas, garmentIds),
+
+    // Allows App.jsx to request a clean PNG.
+    exportOutfitPNG: (backgroundColor = "#ffffff") =>
+      renderOutfitOffscreen(canvas, backgroundColor),
+  });
+}
+
 
     let animationFrameId;
     const measureFPS = (time) => {
@@ -294,9 +438,47 @@ export default function DesignCanvas({
     const handlePathCreated = async (e) => {
     const path = e.path;
 
+    // Erase only the paint associated with the currently selected target.
+    if (isEraserRef.current) {
+      canvas.remove(path);
+      const target = activeDrawingGarmentRef.current || mannequinRef.current;
+      const role = target?.data?.role === 'mannequin'
+        ? 'mannequin-drawing' : 'garment-drawing';
+      const garmentId = target?.data?.garmentId;
+
+      // Queue operations so fast consecutive erase gestures cannot race.
+      eraseQueueRef.current = eraseQueueRef.current.then(async () => {
+        if (!target || !canvas.getObjects().includes(target)) return;
+        const affected = canvas.getObjects().filter((object) =>
+          object.data?.role === role &&
+          (role === 'mannequin-drawing' || object.data?.garmentId === garmentId) &&
+          object.intersectsWithObject(path)
+        );
+        const changes = [];
+        for (const original of affected) {
+          if (!canvas.getObjects().includes(original)) continue;
+          const replacement = await erasePaintObject(
+            original, path, canvas.getWidth(), canvas.getHeight()
+          );
+          if (!replacement || !canvas.getObjects().includes(original)) continue;
+          const index = canvas.getObjects().indexOf(original);
+          canvas.remove(original);
+          canvas.insertAt(index, replacement);
+          changes.push({ original, replacement });
+        }
+        if (changes.length) {
+          saveHistory({ type: 'erase', changes });
+          sortCanvasLayers(canvas);
+        }
+        canvas.requestRenderAll();
+      }).catch((error) => console.error('Erase failed:', error));
+      return;
+    }
+
 
     //Draw on the currently selected garment.
-  const target = activeDrawingGarmentRef.current;
+  // Draw on clothing when selected; otherwise draw on the mannequin.
+const target = activeDrawingGarmentRef.current || mannequinRef.current;
 
   if (!target || !canvas.getObjects().includes(target)) {
     canvas.remove(path);
@@ -305,18 +487,22 @@ export default function DesignCanvas({
   }
 
   //Remember which clothing this drawing belongs to.
-  path.data = {
-    ...(path.data || {}),
-    role: "garment-drawing",
-    garmentId: target.data.garmentId,
-    layerType: "accessories",
-  };
+  const isMannequin = target.data?.role === "mannequin";
+
+path.data = {
+  ...(path.data || {}),
+  role: isMannequin ? "mannequin-drawing" : "garment-drawing",
+  garmentId: isMannequin ? null : target.data?.garmentId,
+  layerType: "accessories",
+};
 
   //Hides the stroke until the clothing clip is ready
   path.set({ visible: false });
 
   try {
-    const clip = await makeGarmentClip(target);
+    // Garment strokes stay clipped to clothing.
+// Mannequin strokes are clipped to the mannequin.
+const clip = await makeGarmentClip(target);
 
     if (!canvas.getObjects().includes(path)) return;
 
@@ -325,14 +511,10 @@ export default function DesignCanvas({
     path.setCoords();
 
     //drawing for the undo button
-    undoStackRef.current.push({
-      type:"drawing",
-      path: path,
-
-
+    saveHistory({
+        type: "drawing",
+        path: path,
     });
-    redoStackRef.current = [];
-    setHistoryVersion((previous) => previous + 1);
 
     sortCanvasLayers(canvas);
   } catch (error) {
@@ -346,13 +528,24 @@ export default function DesignCanvas({
     canvas.on("path:created", handlePathCreated);
     sortCanvasLayers(canvas);
 
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-      canvas.off("path:created", handlePathCreated);
-      fabricCanvasRef.current = null;
-      garmentBoundaryRef.current = null;
-      canvas.dispose();
-    };
+    
+return () => {
+  cancelAnimationFrame(animationFrameId);
+  canvas.off("path:created", handlePathCreated);
+
+  // Sprint 3: Release references to unused canvas objects.
+  undoStackRef.current = [];
+  redoStackRef.current = [];
+  equippedGarmentsRef.current = {};
+  activeDrawingGarmentRef.current = null;
+  mannequinRef.current = null;
+  garmentBoundaryRef.current = null;
+  fabricCanvasRef.current = null;
+
+  // Dispose Fabric's rendering resources.
+  void canvas.dispose();
+};
+
   }, []);
   // NEW (Increment 2): Displays the mannequin based on frame and body type.
 useEffect(() => {
@@ -510,16 +703,13 @@ useEffect(() => {
       canvas.add(garment);
 
         // Remember the clothing change for Undo/Redo.
-          undoStackRef.current.push({
-             type: "clothing",
-            category: category,
-            previousGarment: oldGarment || null,
-             newGarment: garment,
-             removedDrawings: removedDrawings,
-});
-
-redoStackRef.current = [];
-setHistoryVersion((previous) => previous + 1);
+          saveHistory({
+              type: "clothing",
+              category: category,
+              previousGarment: oldGarment || null,
+              newGarment: garment,
+              removedDrawings: removedDrawings,
+          });
 
           //Draw on the most recently selected garment.
         activeDrawingGarmentRef.current = garment;
@@ -630,6 +820,13 @@ function handleUndo() {
     canvas.remove(action.path);
   }
 
+  if (action.type === "erase") {
+    action.changes.forEach(({ original, replacement }) => {
+      canvas.remove(replacement);
+      canvas.add(original);
+    });
+  }
+
   if (action.type === "clothing") {
     canvas.remove(action.newGarment);
 
@@ -667,9 +864,19 @@ function handleRedo() {
         object.data?.garmentId === action.path.data?.garmentId
     );
 
-    if (garmentExists) {
-      canvas.add(action.path);
-    }
+    const isMannequinDrawing =
+  action.path.data?.role === "mannequin-drawing";
+
+if (garmentExists || (isMannequinDrawing && mannequinRef.current)) {
+  canvas.add(action.path);
+}
+  }
+
+  if (action.type === "erase") {
+    action.changes.forEach(({ original, replacement }) => {
+      canvas.remove(original);
+      canvas.add(replacement);
+    });
   }
 
   if (action.type === "clothing") {
@@ -700,15 +907,14 @@ function handleRedo() {
     if (!canvas || !canvas.freeDrawingBrush) return;
 
     canvas.freeDrawingBrush.width = strokeWidth;
-    if (isEraser) {
-      canvas.freeDrawingBrush.color = CANVAS_BG;
-    } else {
-      const hex = strokeColor.replace("#", "");
-      const r = parseInt(hex.substring(0, 2), 16);
-      const g = parseInt(hex.substring(2, 4), 16);
-      const b = parseInt(hex.substring(4, 6), 16);
-      canvas.freeDrawingBrush.color = `rgba(${r}, ${g}, ${b}, ${opacity})`;
-    }
+    const hex = strokeColor.replace("#", "");
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+canvas.freeDrawingBrush.color = isEraser
+  ? "rgba(0, 0, 0, 1)"
+  : `rgba(${r}, ${g}, ${b}, ${opacity})`;
   }, [strokeWidth, strokeColor, opacity, isEraser]);
 
   return (
@@ -752,6 +958,27 @@ function handleRedo() {
         >
           {isEraser ? "Switch to Brush" : "Switch to Eraser"}
         </button>
+
+<button
+  type="button"
+  onClick={async () => {
+    try {
+      const canvas = fabricCanvasRef.current;
+      const png = await renderOutfitOffscreen(canvas);
+
+      const link = document.createElement("a");
+      link.href = png;
+      link.download = "outfit.png";
+      link.click();
+    } catch (error) {
+      console.error("PNG export failed:", error);
+      alert("PNG export failed. Check the console.");
+    }
+  }}
+>
+  Export
+</button>
+
       {/* Undo and redo drawing buttons. */}
 <button
   onClick={handleUndo}
