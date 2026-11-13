@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 800" width="500" height="800"><g id="normalized-garment-layer" transform="matrix(1.0000 0 0 1.0000 180.0000 120.0000)"><path d="M40,12 Q70,6 100,12 L108,38 L32,38 Z" fill="#ff69b4" stroke="#880e4f" stroke-width="2" />
-  
-  <path d="M32,38 L108,38 L128,54 Q70,62 12,54 Z" fill="#ff85c0" stroke="#880e4f" stroke-width="2" />
-  
-  <path d="M22,46 Q70,53 118,46" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="4,3" fill="none" />
-  
-  <circle cx="54" cy="26" r="6" fill="#ffeb3b" stroke="#111111" stroke-width="1.2" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 800" width="500" height="800"><g id="normalized-garment-layer" transform="matrix(0.6667 0 0 0.6667 180.0000 120.0000)"><path d="M62,24 C84,16 126,16 148,24 L162,64 C128,72 82,72 48,64 Z" fill="#ffffff" stroke="#1f2937" stroke-width="2.5" stroke-linejoin="round" />
+  <ellipse cx="105" cy="24" rx="43" ry="7" fill="#f9fafb" stroke="#1f2937" stroke-width="2" />
+  <path d="M48,64 L162,64 L192,88 C142,102 68,102 18,88 Z" fill="#ffffff" stroke="#1f2937" stroke-width="2.5" stroke-linejoin="round" />
+  <path d="M36,74 C80,84 130,84 174,74" fill="none" stroke="#4b5563" stroke-width="1.2" stroke-dasharray="4,3" />
 </g></svg>

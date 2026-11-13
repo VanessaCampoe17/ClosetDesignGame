@@ -1,10 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 65">
-  <!-- Crown -->
-  <rect x="34" y="14" width="72" height="28" rx="4" fill="#f3e5ab" stroke="#8d6e63" stroke-width="2" />
-  <!-- Ribbon Band -->
-  <rect x="34" y="32" width="72" height="10" fill="#800020" />
-  <!-- Decorative Feather Plume -->
-  <path d="M98,35 Q122,8 134,4 Q120,22 104,36 Z" fill="#ffffff" stroke="#bdc3c7" stroke-width="1.5" />
-  <!-- Flat Brim -->
-  <ellipse cx="70" cy="44" rx="68" ry="12" fill="#f3e5ab" stroke="#8d6e63" stroke-width="2" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 110" width="220" height="110">
+  <ellipse cx="110" cy="74" rx="98" ry="18" fill="#ffffff" stroke="#1f2937" stroke-width="2.5"/>
+  <path d="M54,70 L58,30 C58,23 162,23 162,30 L166,70 C140,76 80,76 54,70 Z" fill="#ffffff" stroke="#1f2937" stroke-width="2.5" stroke-linejoin="round"/>
+  <ellipse cx="110" cy="30" rx="52" ry="8" fill="#f9fafb" stroke="#1f2937" stroke-width="2"/>
+  <path d="M55,54 C82,60 138,60 165,54 L166,68 C138,74 82,74 54,68 Z" fill="#f3f4f6" stroke="#1f2937" stroke-width="2"/>
+  <path d="M148,58 L134,50 L134,68 Z M148,58 L164,49 L164,68 Z" fill="#ffffff" stroke="#1f2937" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M152,52 C172,30 192,16 206,12 C192,28 176,42 156,55" fill="#ffffff" stroke="#1f2937" stroke-width="1.6" stroke-linejoin="round"/>
 </svg>
