@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 800" width="500" height="800"><g id="normalized-garment-layer" transform="matrix(0.6364 0 0 0.6364 180.0000 120.0000)"><path d="M16,76 C44,94 176,94 204,76 C184,66 164,66 158,68 L62,68 C56,66 36,66 16,76 Z" fill="#ffffff" stroke="#1f2937" stroke-width="2.5" stroke-linejoin="round" />
+  <path d="M62,68 L72,26 C86,18 98,28 110,28 C122,28 134,18 148,26 L158,68 Z" fill="#ffffff" stroke="#1f2937" stroke-width="2.5" stroke-linejoin="round" />
+  <path d="M64,58 C94,63 126,63 156,58 L158,68 C126,73 94,73 62,68 Z" fill="#f3f4f6" stroke="#1f2937" stroke-width="2" />
+  <rect x="134" y="57" width="8" height="11" rx="1.5" fill="#ffffff" stroke="#1f2937" stroke-width="1.6" />
+</g></svg>

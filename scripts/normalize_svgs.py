@@ -1,6 +1,7 @@
 import os
 import re
 import glob
+import json
 import xml.etree.ElementTree as ET
 
 TARGET_CANVAS_WIDTH = 500
@@ -12,8 +13,9 @@ ANCHOR_CONFIG = {
     "dresses": {"x": 250, "y": 250, "target_width": 220},
     "headwear": {"x": 250, "y": 120, "target_width": 140},
     "shoes": {"x": 250, "y": 550, "target_width": 160},
-    "accessories": {"x": 250, "y": 260, "target_width": 180}
+    "accessories": {"x": 250, "y": 260, "target_width": 180},
 }
+
 
 def get_dimensions(root):
     viewbox = root.attrib.get("viewBox") or root.attrib.get("viewbox")
@@ -28,6 +30,7 @@ def get_dimensions(root):
     h = float(re.findall(r"[\d.]+", h_str)[0])
     return 0.0, 0.0, w, h
 
+
 def normalize_mannequin(input_path, output_path):
     """Standardizes mannequin silhouette viewBox, dimensions, and layer structure."""
     ET.register_namespace("", "http://www.w3.org/2000/svg")
@@ -37,11 +40,11 @@ def normalize_mannequin(input_path, output_path):
     new_root = ET.Element("svg", {
         "viewBox": f"0 0 {TARGET_CANVAS_WIDTH} {TARGET_CANVAS_HEIGHT}",
         "width": str(TARGET_CANVAS_WIDTH),
-        "height": str(TARGET_CANVAS_HEIGHT)
+        "height": str(TARGET_CANVAS_HEIGHT),
     })
 
     wrapper = ET.SubElement(new_root, "g", {
-        "id": "normalized-mannequin-layer"
+        "id": "normalized-mannequin-layer",
     })
 
     for child in list(root):
@@ -50,6 +53,7 @@ def normalize_mannequin(input_path, output_path):
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     ET.ElementTree(new_root).write(output_path, encoding="utf-8", xml_declaration=True)
     print(f"Success! Normalized Mannequin: {output_path}")
+
 
 def normalize_svg(input_path, output_path, category="bottoms"):
     config = ANCHOR_CONFIG.get(category, ANCHOR_CONFIG["bottoms"])
@@ -68,12 +72,12 @@ def normalize_svg(input_path, output_path, category="bottoms"):
     new_root = ET.Element("svg", {
         "viewBox": f"0 0 {TARGET_CANVAS_WIDTH} {TARGET_CANVAS_HEIGHT}",
         "width": str(TARGET_CANVAS_WIDTH),
-        "height": str(TARGET_CANVAS_HEIGHT)
+        "height": str(TARGET_CANVAS_HEIGHT),
     })
 
     wrapper = ET.SubElement(new_root, "g", {
         "id": "normalized-garment-layer",
-        "transform": f"matrix({scale:.4f} 0 0 {scale:.4f} {translate_x:.4f} {translate_y:.4f})"
+        "transform": f"matrix({scale:.4f} 0 0 {scale:.4f} {translate_x:.4f} {translate_y:.4f})",
     })
 
     for child in list(root):
@@ -83,17 +87,19 @@ def normalize_svg(input_path, output_path, category="bottoms"):
     ET.ElementTree(new_root).write(output_path, encoding="utf-8", xml_declaration=True)
     print(f"Success! Normalized Garment: {output_path}")
 
-if __name__ == "__main__":
-    garment_batch = [
-        ("raw_assets/garments/edwardian_walking_skirt_raw.svg", "public/assets/garments/1890s/edwardian_walking_skirt.svg", "bottoms"),
-        ("raw_assets/garments/victorian_boater_hat_raw.svg", "public/assets/garments/1890s/victorian_boater_hat.svg", "headwear"),
-        ("raw_assets/garments/poodle_skirt_raw.svg", "public/assets/garments/1950s/poodle_skirt.svg", "bottoms"),
-        ("raw_assets/garments/vintage_pillbox_hat_raw.svg", "public/assets/garments/1950s/vintage_pillbox_hat.svg", "headwear"),
-        ("raw_assets/garments/colorblock_windbreaker_raw.svg", "public/assets/garments/1990s/colorblock_windbreaker.svg", "tops"),
-        ("raw_assets/garments/harajuku_bucket_hat_raw.svg", "public/assets/garments/1990s/harajuku_bucket_hat.svg", "headwear"),
-    ]
 
-    for raw_path, clean_path, cat in garment_batch:
+if __name__ == "__main__":
+    catalog_path = "src/data/clothingCatalog.json"
+    with open(catalog_path, "r", encoding="utf-8") as f:
+        catalog = json.load(f)
+
+    for item in catalog.get("items", []):
+        out_rel = item["svgPath"].lstrip("/")
+        clean_path = os.path.join("public", out_rel)
+        base_name = os.path.splitext(os.path.basename(out_rel))[0]
+        raw_path = os.path.join("raw_assets", "garments", f"{base_name}_raw.svg")
+        cat = item.get("category", "bottoms")
+
         if os.path.exists(raw_path):
             normalize_svg(raw_path, clean_path, category=cat)
         else:

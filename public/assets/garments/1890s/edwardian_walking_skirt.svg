@@ -1,9 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 800" width="500" height="800"><g id="normalized-garment-layer" transform="matrix(1.0000 0 0 1.0000 140.0000 350.0000)"><path d="M68,0 L152,0 L156,16 L64,16 Z" fill="#2c3e50" stroke="#1a252f" stroke-width="2" />
-  
-  <path d="M64,16 L156,16 L205,250 Q110,262 15,250 Z" fill="#34495e" stroke="#1a252f" stroke-width="2.5" />
-  
-  <path d="M88,16 L70,253 M110,16 L110,256 M132,16 L150,253" stroke="#1a252f" stroke-width="2" fill="none" />
-  
-  <path d="M18,236 Q110,248 202,236" stroke="#95a5a6" stroke-width="3" fill="none" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 800" width="500" height="800"><g id="normalized-garment-layer" transform="matrix(1.0000 0 0 1.0000 140.0000 350.0000)"><path d="M74,14 L146,14 L154,32 C172,110 192,195 204,256 C155,268 65,268 16,256 C28,195 48,110 66,32 Z" fill="#ffffff" stroke="#1f2937" stroke-width="2.5" stroke-linejoin="round" />
+  <path d="M74,14 L146,14 L150,28 C128,32 92,32 70,28 Z" fill="#f9fafb" stroke="#1f2937" stroke-width="2.2" stroke-linejoin="round" />
+  <path d="M94,30 C86,105 74,185 64,262" fill="none" stroke="#1f2937" stroke-width="1.6" />
+  <path d="M126,30 C134,105 146,185 156,262" fill="none" stroke="#1f2937" stroke-width="1.6" />
+  <path d="M22,228 C70,238 150,238 198,228" fill="none" stroke="#1f2937" stroke-width="1.8" />
+  <path d="M19,244 C68,255 152,255 201,244" fill="none" stroke="#4b5563" stroke-width="1.1" stroke-dasharray="3,3" />
 </g></svg>

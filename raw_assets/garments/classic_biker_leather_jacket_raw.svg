@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 230" width="260" height="230">
+  <path d="M86,24 L174,24 L232,68 L216,174 L190,170 L186,96 L184,196 L76,196 L74,96 L70,170 L44,174 L28,68 Z" fill="#ffffff" stroke="#1f2937" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M62,42 L88,26 L92,35 L66,50 Z" fill="#f9fafb" stroke="#1f2937" stroke-width="1.8"/>
+  <path d="M198,42 L172,26 L168,35 L194,50 Z" fill="#f9fafb" stroke="#1f2937" stroke-width="1.8"/>
+  <path d="M96,24 L130,66 L104,92 L82,66 L90,48 L78,44 Z" fill="#f9fafb" stroke="#1f2937" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M164,24 L130,66 L156,92 L178,66 L170,48 L182,44 Z" fill="#f9fafb" stroke="#1f2937" stroke-width="2" stroke-linejoin="round"/>
+  <line x1="130" y1="66" x2="144" y2="180" stroke="#1f2937" stroke-width="2.2"/>
+  <line x1="92" y1="106" x2="118" y2="118" stroke="#1f2937" stroke-width="2"/>
+  <line x1="88" y1="142" x2="112" y2="164" stroke="#1f2937" stroke-width="2"/>
+  <rect x="76" y="180" width="108" height="16" fill="#f9fafb" stroke="#1f2937" stroke-width="2"/>
+  <rect x="122" y="178" width="16" height="20" rx="2" fill="#ffffff" stroke="#1f2937" stroke-width="2.2"/>
+</svg>

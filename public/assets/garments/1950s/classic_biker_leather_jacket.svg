@@ -1,34 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" width="600" height="800">
-  <!-- 1950s Classic Biker Leather Jacket -->
-  <g id="classic-biker-jacket" fill="#222222" stroke="#111111" stroke-width="2" stroke-linejoin="round">
-    <!-- Main Jacket Body -->
-    <path d="M 210 205 
-             L 240 215 
-             L 260 215 
-             L 290 205 
-             L 305 270 
-             L 285 275 
-             L 280 330 
-             L 220 330 
-             L 215 275 
-             L 195 270 
-             Z" />
-             
-    <!-- Asymmetrical Zipper Lapel Left -->
-    <path d="M 235 215 L 265 265 L 230 260 Z" fill="#333333" stroke="#silver" stroke-width="1" />
-    
-    <!-- Lapel Right -->
-    <path d="M 265 215 L 270 250 L 255 240 Z" fill="#2b2b2b" stroke="#silver" stroke-width="1" />
-    
-    <!-- Asymmetric Main Zipper -->
-    <path d="M 260 240 L 245 330" stroke="#A0A0A0" stroke-width="2" stroke-dasharray="3,1" fill="none" />
-    
-    <!-- Waist Belt with Buckle -->
-    <rect x="220" y="320" width="60" height="10" fill="#1a1a1a" stroke="#silver" stroke-width="1" />
-    <rect x="245" y="318" width="10" height="14" fill="none" stroke="#D4AF37" stroke-width="1.5" />
-    
-    <!-- Pocket Zippers -->
-    <line x1="225" y1="285" x2="240" y2="295" stroke="#A0A0A0" stroke-width="1.5" />
-    <line x1="262" y1="290" x2="275" y2="290" stroke="#A0A0A0" stroke-width="1.5" />
-  </g>
-</svg>
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 800" width="500" height="800"><g id="normalized-garment-layer" transform="matrix(0.8462 0 0 0.8462 140.0000 215.0000)"><path d="M86,24 L174,24 L232,68 L216,174 L190,170 L186,96 L184,196 L76,196 L74,96 L70,170 L44,174 L28,68 Z" fill="#ffffff" stroke="#1f2937" stroke-width="2.5" stroke-linejoin="round" />
+  <path d="M62,42 L88,26 L92,35 L66,50 Z" fill="#f9fafb" stroke="#1f2937" stroke-width="1.8" />
+  <path d="M198,42 L172,26 L168,35 L194,50 Z" fill="#f9fafb" stroke="#1f2937" stroke-width="1.8" />
+  <path d="M96,24 L130,66 L104,92 L82,66 L90,48 L78,44 Z" fill="#f9fafb" stroke="#1f2937" stroke-width="2" stroke-linejoin="round" />
+  <path d="M164,24 L130,66 L156,92 L178,66 L170,48 L182,44 Z" fill="#f9fafb" stroke="#1f2937" stroke-width="2" stroke-linejoin="round" />
+  <line x1="130" y1="66" x2="144" y2="180" stroke="#1f2937" stroke-width="2.2" />
+  <line x1="92" y1="106" x2="118" y2="118" stroke="#1f2937" stroke-width="2" />
+  <line x1="88" y1="142" x2="112" y2="164" stroke="#1f2937" stroke-width="2" />
+  <rect x="76" y="180" width="108" height="16" fill="#f9fafb" stroke="#1f2937" stroke-width="2" />
+  <rect x="122" y="178" width="16" height="20" rx="2" fill="#ffffff" stroke="#1f2937" stroke-width="2.2" />
+</g></svg>

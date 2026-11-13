@@ -1,5 +1,5 @@
 {
-  "version": "1.2.0",
+  "version": "2.0.0",
   "mannequins": {
     "feminine": {
       "slim": "/assets/mannequins/feminine_slim.svg",
@@ -27,7 +27,10 @@
       "targetFrame": "feminine",
       "svgPath": "/assets/garments/1890s/victorian_corset_bodice.svg",
       "defaultZIndex": 25,
-      "anchorCoords": { "x": 250, "y": 230 }
+      "anchorCoords": {
+        "x": 250,
+        "y": 230
+      }
     },
     {
       "id": "1890s-eu-edwardian-skirt-01",
@@ -38,7 +41,10 @@
       "targetFrame": "feminine",
       "svgPath": "/assets/garments/1890s/edwardian_walking_skirt.svg",
       "defaultZIndex": 20,
-      "anchorCoords": { "x": 250, "y": 350 }
+      "anchorCoords": {
+        "x": 250,
+        "y": 350
+      }
     },
     {
       "id": "1890s-eu-boater-hat-01",
@@ -49,7 +55,136 @@
       "targetFrame": "feminine",
       "svgPath": "/assets/garments/1890s/victorian_boater_hat.svg",
       "defaultZIndex": 40,
-      "anchorCoords": { "x": 250, "y": 120 }
+      "anchorCoords": {
+        "x": 250,
+        "y": 120
+      }
+    },
+    {
+      "id": "1890s-na-gibson-blouse-01",
+      "name": "Gibson Girl Puff-Sleeve Blouse",
+      "era": "1890s",
+      "region": "North America",
+      "category": "tops",
+      "targetFrame": "feminine",
+      "svgPath": "/assets/garments/1890s/gibson_girl_blouse.svg",
+      "defaultZIndex": 25,
+      "anchorCoords": {
+        "x": 250,
+        "y": 225
+      }
+    },
+    {
+      "id": "1890s-na-prairie-skirt-01",
+      "name": "Frontier Prairie Tiered Skirt",
+      "era": "1890s",
+      "region": "North America",
+      "category": "bottoms",
+      "targetFrame": "feminine",
+      "svgPath": "/assets/garments/1890s/frontier_prairie_skirt.svg",
+      "defaultZIndex": 20,
+      "anchorCoords": {
+        "x": 250,
+        "y": 350
+      }
+    },
+    {
+      "id": "1890s-na-stetson-hat-01",
+      "name": "1890s Campaign Stetson Hat",
+      "era": "1890s",
+      "region": "North America",
+      "category": "headwear",
+      "targetFrame": "neutral",
+      "svgPath": "/assets/garments/1890s/campaign_stetson_hat.svg",
+      "defaultZIndex": 40,
+      "anchorCoords": {
+        "x": 250,
+        "y": 120
+      }
+    },
+    {
+      "id": "1890s-ea-meiji-haori-01",
+      "name": "Meiji Era Crested Haori Jacket",
+      "era": "1890s",
+      "region": "East Asia",
+      "category": "tops",
+      "targetFrame": "neutral",
+      "svgPath": "/assets/garments/1890s/meiji_haori_jacket.svg",
+      "defaultZIndex": 30,
+      "anchorCoords": {
+        "x": 250,
+        "y": 225
+      }
+    },
+    {
+      "id": "1890s-ea-hakama-skirt-01",
+      "name": "Meiji Pleated Hakama Trousers",
+      "era": "1890s",
+      "region": "East Asia",
+      "category": "bottoms",
+      "targetFrame": "neutral",
+      "svgPath": "/assets/garments/1890s/meiji_hakama_pleats.svg",
+      "defaultZIndex": 20,
+      "anchorCoords": {
+        "x": 250,
+        "y": 350
+      }
+    },
+    {
+      "id": "1890s-ea-kanzashi-comb-01",
+      "name": "Meiji Silk Kanzashi Hairpiece",
+      "era": "1890s",
+      "region": "East Asia",
+      "category": "headwear",
+      "targetFrame": "feminine",
+      "svgPath": "/assets/garments/1890s/meiji_kanzashi_hairpiece.svg",
+      "defaultZIndex": 40,
+      "anchorCoords": {
+        "x": 250,
+        "y": 115
+      }
+    },
+    {
+      "id": "1950s-eu-parisian-bar-jacket-01",
+      "name": "Parisian Tailored Bar Jacket",
+      "era": "1950s",
+      "region": "Europe",
+      "category": "tops",
+      "targetFrame": "feminine",
+      "svgPath": "/assets/garments/1950s/parisian_bar_jacket.svg",
+      "defaultZIndex": 30,
+      "anchorCoords": {
+        "x": 250,
+        "y": 225
+      }
+    },
+    {
+      "id": "1950s-eu-new-look-skirt-01",
+      "name": "Parisian New Look Pleated Midi",
+      "era": "1950s",
+      "region": "Europe",
+      "category": "bottoms",
+      "targetFrame": "feminine",
+      "svgPath": "/assets/garments/1950s/parisian_new_look_skirt.svg",
+      "defaultZIndex": 20,
+      "anchorCoords": {
+        "x": 250,
+        "y": 350
+      }
+    },
+    {
+      "id": "1950s-eu-cartwheel-hat-01",
+      "name": "Riviera Wide-Brim Cartwheel Hat",
+      "era": "1950s",
+      "region": "Europe",
+      "category": "headwear",
+      "targetFrame": "feminine",
+      "svgPath": "/assets/garments/1950s/riviera_cartwheel_hat.svg",
+      "defaultZIndex": 40,
+      "anchorCoords": {
+        "x": 250,
+        "y": 115
+      }
     },
     {
       "id": "1950s-na-greaser-jacket-01",
@@ -60,7 +195,10 @@
       "targetFrame": "masculine",
       "svgPath": "/assets/garments/1950s/classic_biker_leather_jacket.svg",
       "defaultZIndex": 35,
-      "anchorCoords": { "x": 250, "y": 215 }
+      "anchorCoords": {
+        "x": 250,
+        "y": 215
+      }
     },
     {
       "id": "1950s-na-poodle-skirt-01",
@@ -71,7 +209,10 @@
       "targetFrame": "feminine",
       "svgPath": "/assets/garments/1950s/poodle_skirt.svg",
       "defaultZIndex": 20,
-      "anchorCoords": { "x": 250, "y": 350 }
+      "anchorCoords": {
+        "x": 250,
+        "y": 350
+      }
     },
     {
       "id": "1950s-na-pillbox-hat-01",
@@ -82,7 +223,136 @@
       "targetFrame": "feminine",
       "svgPath": "/assets/garments/1950s/vintage_pillbox_hat.svg",
       "defaultZIndex": 40,
-      "anchorCoords": { "x": 250, "y": 120 }
+      "anchorCoords": {
+        "x": 250,
+        "y": 120
+      }
+    },
+    {
+      "id": "1950s-ea-showa-sailor-top-01",
+      "name": "Showa Era Sailor Collar Blouse",
+      "era": "1950s",
+      "region": "East Asia",
+      "category": "tops",
+      "targetFrame": "feminine",
+      "svgPath": "/assets/garments/1950s/showa_sailor_blouse.svg",
+      "defaultZIndex": 25,
+      "anchorCoords": {
+        "x": 250,
+        "y": 225
+      }
+    },
+    {
+      "id": "1950s-ea-showa-pleated-skirt-01",
+      "name": "Showa Box-Pleated Midi Skirt",
+      "era": "1950s",
+      "region": "East Asia",
+      "category": "bottoms",
+      "targetFrame": "feminine",
+      "svgPath": "/assets/garments/1950s/showa_pleated_skirt.svg",
+      "defaultZIndex": 20,
+      "anchorCoords": {
+        "x": 250,
+        "y": 350
+      }
+    },
+    {
+      "id": "1950s-ea-ginza-cloche-01",
+      "name": "1950s Ginza Ribbon Cloche Hat",
+      "era": "1950s",
+      "region": "East Asia",
+      "category": "headwear",
+      "targetFrame": "feminine",
+      "svgPath": "/assets/garments/1950s/ginza_ribbon_cloche.svg",
+      "defaultZIndex": 40,
+      "anchorCoords": {
+        "x": 250,
+        "y": 115
+      }
+    },
+    {
+      "id": "1990s-eu-britpop-track-top-01",
+      "name": "Britpop Striped Track Jacket",
+      "era": "1990s",
+      "region": "Europe",
+      "category": "tops",
+      "targetFrame": "masculine",
+      "svgPath": "/assets/garments/1990s/britpop_track_jacket.svg",
+      "defaultZIndex": 30,
+      "anchorCoords": {
+        "x": 250,
+        "y": 220
+      }
+    },
+    {
+      "id": "1990s-eu-tartan-mini-01",
+      "name": "London Tartan Pleated Mini Skirt",
+      "era": "1990s",
+      "region": "Europe",
+      "category": "bottoms",
+      "targetFrame": "feminine",
+      "svgPath": "/assets/garments/1990s/london_tartan_mini.svg",
+      "defaultZIndex": 20,
+      "anchorCoords": {
+        "x": 250,
+        "y": 350
+      }
+    },
+    {
+      "id": "1990s-eu-kangol-beret-01",
+      "name": "1990s UK Wool Flat Beret",
+      "era": "1990s",
+      "region": "Europe",
+      "category": "headwear",
+      "targetFrame": "neutral",
+      "svgPath": "/assets/garments/1990s/uk_wool_beret.svg",
+      "defaultZIndex": 40,
+      "anchorCoords": {
+        "x": 250,
+        "y": 115
+      }
+    },
+    {
+      "id": "1990s-na-grunge-flannel-01",
+      "name": "Seattle Grunge Oversized Flannel",
+      "era": "1990s",
+      "region": "North America",
+      "category": "tops",
+      "targetFrame": "masculine",
+      "svgPath": "/assets/garments/1990s/grunge_oversized_flannel.svg",
+      "defaultZIndex": 30,
+      "anchorCoords": {
+        "x": 250,
+        "y": 225
+      }
+    },
+    {
+      "id": "1990s-na-carpenter-jeans-01",
+      "name": "1990s Baggy Carpenter Denim",
+      "era": "1990s",
+      "region": "North America",
+      "category": "bottoms",
+      "targetFrame": "masculine",
+      "svgPath": "/assets/garments/1990s/baggy_carpenter_jeans.svg",
+      "defaultZIndex": 20,
+      "anchorCoords": {
+        "x": 250,
+        "y": 350
+      }
+    },
+    {
+      "id": "1990s-na-snapback-cap-01",
+      "name": "90s Streetwear Snapback Cap",
+      "era": "1990s",
+      "region": "North America",
+      "category": "headwear",
+      "targetFrame": "neutral",
+      "svgPath": "/assets/garments/1990s/streetwear_snapback_cap.svg",
+      "defaultZIndex": 40,
+      "anchorCoords": {
+        "x": 250,
+        "y": 115
+      }
     },
     {
       "id": "1990s-ea-windbreaker-01",
@@ -93,7 +363,10 @@
       "targetFrame": "neutral",
       "svgPath": "/assets/garments/1990s/colorblock_windbreaker.svg",
       "defaultZIndex": 30,
-      "anchorCoords": { "x": 250, "y": 215 }
+      "anchorCoords": {
+        "x": 250,
+        "y": 215
+      }
     },
     {
       "id": "1990s-ea-harajuku-skirt-01",
@@ -104,18 +377,24 @@
       "targetFrame": "feminine",
       "svgPath": "/assets/garments/1990s/harajuku_skirt.svg",
       "defaultZIndex": 20,
-      "anchorCoords": { "x": 250, "y": 350 }
+      "anchorCoords": {
+        "x": 250,
+        "y": 350
+      }
     },
     {
       "id": "1990s-ea-bucket-hat-01",
-      "name": "Harajuku Smiley Bucket Hat",
+      "name": "Harajuku Street Bucket Hat",
       "era": "1990s",
       "region": "East Asia",
       "category": "headwear",
       "targetFrame": "neutral",
       "svgPath": "/assets/garments/1990s/harajuku_bucket_hat.svg",
       "defaultZIndex": 40,
-      "anchorCoords": { "x": 250, "y": 120 }
+      "anchorCoords": {
+        "x": 250,
+        "y": 120
+      }
     }
   ]
 }
