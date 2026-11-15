@@ -9,6 +9,7 @@ import {
   Shirt,
   X,
   ChevronRight,
+  Share2,
 } from "lucide-react";
 
 import DesignCanvas from "./components/DesignCanvas";
@@ -31,6 +32,8 @@ function App() {
   const [isSavedModalOpen, setIsSavedModalOpen] = useState(false);
   const [outfitNameInput, setOutfitNameInput] = useState("");
   const [loadedCanvasData, setLoadedCanvasData] = useState(null);
+  const [isSharingDesign, setIsSharingDesign] = useState(false);
+  const [shareMessage, setShareMessage] = useState("");
 
   // Ref to hold canvas serializer from DesignCanvas
   const canvasInterfaceRef = useRef(null);
@@ -86,6 +89,63 @@ function App() {
   const handleDeleteOutfit = (id) => {
     const remaining = deleteOutfit(id);
     setSavedOutfits(remaining);
+  };
+
+  const handleShareDesign = async () => {
+    setIsSharingDesign(true);
+    setShareMessage("");
+
+    try {
+      const pngDataUrl =
+        await canvasInterfaceRef.current?.exportOutfitPNG("#ffffff");
+
+      if (!pngDataUrl) {
+        throw new Error("The design image could not be created.");
+      }
+
+      const imageBlob = await fetch(pngDataUrl).then((response) =>
+        response.blob(),
+      );
+      const imageFile =
+        typeof File === "function"
+          ? new File([imageBlob], "closet-design.png", {
+              type: "image/png",
+            })
+          : null;
+
+      if (
+        imageFile &&
+        typeof navigator.share === "function" &&
+        typeof navigator.canShare === "function" &&
+        navigator.canShare({ files: [imageFile] })
+      ) {
+        await navigator.share({
+          files: [imageFile],
+          title: "My Closet Design",
+          text: "Check out my design from Closet Design Game.",
+        });
+        setShareMessage("Your design was shared.");
+        return;
+      }
+
+      const downloadLink = document.createElement("a");
+      downloadLink.href = pngDataUrl;
+      downloadLink.download = "closet-design.png";
+      downloadLink.click();
+      setShareMessage(
+        "Image sharing isn't supported in this browser, so the design was downloaded instead.",
+      );
+    } catch (error) {
+      if (error?.name === "AbortError") {
+        setShareMessage("Sharing was canceled.");
+      } else {
+        setShareMessage(
+          "Unable to share this design. Please try again or export the image.",
+        );
+      }
+    } finally {
+      setIsSharingDesign(false);
+    }
   };
 
   // Build the era and region options directly from the catalog.
@@ -344,16 +404,29 @@ function App() {
 
         {/* Main design area */}
         <main className="flex min-w-0 flex-1 flex-col items-center p-3 sm:p-6">
-          <div className="mb-4 w-full max-w-4xl">
-            <h2 className="text-2xl font-bold">
-              Design Studio
-            </h2>
-
-            <p className="text-sm text-gray-500">
-              Choose a garment and customize it using the
-              drawing tools.
-            </p>
+          <div className="mb-4 flex w-full max-w-4xl flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 className="text-2xl font-bold">Design Studio</h2>
+              <p className="text-sm text-gray-500">
+                Choose a garment and customize it using the drawing tools.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleShareDesign}
+              disabled={isSharingDesign}
+              className="flex shrink-0 items-center gap-2 rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 disabled:cursor-wait disabled:opacity-60"
+            >
+              <Share2 size={17} />
+              {isSharingDesign ? "Preparing..." : "Share Design"}
+            </button>
           </div>
+
+          {shareMessage && (
+            <p className="mb-3 w-full max-w-4xl text-sm text-gray-600" role="status">
+              {shareMessage}
+            </p>
+          )}
 
           <div className="w-full max-w-[680px] min-w-0 rounded-xl bg-white p-3 shadow sm:p-5">
             <DesignCanvas
