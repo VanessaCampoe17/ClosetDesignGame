@@ -1,5 +1,21 @@
 const SERIALIZED_CANVAS_VERSION = 1;
 
+const ALLOWED_FABRIC_TYPES = new Set([
+  "path",
+  "group",
+  "rect",
+  "circle",
+  "polygon",
+  "polyline",
+  "line",
+  "image",
+]);
+
+function isSafeImageSrc(src) {
+  if (typeof src !== "string") return false;
+  return src.startsWith("/assets/") || src.startsWith("data:image/");
+}
+
 function parseCanvasPayload(serializedCanvas) {
   const payload =
     typeof serializedCanvas === "string"
@@ -21,12 +37,29 @@ function parseCanvasPayload(serializedCanvas) {
     throw new TypeError("Canvas data must contain an objects array.");
   }
 
+  const sanitizedObjects = canvasData.objects.filter((obj) => {
+    if (!obj || typeof obj !== "object" || typeof obj.type !== "string") {
+      return false;
+    }
+    const normalizedType = obj.type.toLowerCase();
+    if (!ALLOWED_FABRIC_TYPES.has(normalizedType)) {
+      return false;
+    }
+    if (normalizedType === "image" && !isSafeImageSrc(obj.src)) {
+      return false;
+    }
+    return true;
+  });
+
   const garmentIds =
     isEnvelope && Array.isArray(payload.garmentIds)
       ? [...new Set(payload.garmentIds.filter((id) => typeof id === "string"))]
       : [];
 
-  return { canvasData, garmentIds };
+  return {
+    canvasData: { ...canvasData, objects: sanitizedObjects },
+    garmentIds,
+  };
 }
 
 /**

@@ -1,13 +1,29 @@
 const STORAGE_KEY = "closet_design_game_outfits";
+const MAX_OUTFIT_NAME_LENGTH = 80;
 
 /**
  * Retrieve all saved outfits from LocalStorage.
+ * Validates that parsed data is an array of valid outfit objects.
+ *
  * @returns {Array} Array of outfit objects
  */
 export function getSavedOutfits() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    if (!raw) return [];
+
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed.filter(
+      (item) =>
+        item &&
+        typeof item === "object" &&
+        typeof item.id === "string" &&
+        typeof item.name === "string"
+    );
   } catch (error) {
     console.error("Failed to load outfits from localStorage:", error);
     return [];
@@ -16,20 +32,26 @@ export function getSavedOutfits() {
 
 /**
  * Save a new outfit.
- * @param {string} name - User-defined outfit name
- * @param {object} canvasState - Fabric.js canvas state or garment IDs
- * @param {object} metadata - Additional config (frame, bodyType)
+ *
+ * @param {string} name User-defined outfit name
+ * @param {object} canvasState Fabric.js canvas state or garment IDs
+ * @param {object} metadata Additional config (frame, bodyType)
  * @returns {object} The saved outfit object
  */
 export function saveOutfit(name, canvasState, metadata = {}) {
   try {
     const existing = getSavedOutfits();
+    const sanitizedName = String(name ?? "")
+      .trim()
+      .slice(0, MAX_OUTFIT_NAME_LENGTH);
+
     const newOutfit = {
       id: `outfit_${Date.now()}`,
-      name: name.trim() || `Look ${existing.length + 1}`,
+      name: sanitizedName || `Look ${existing.length + 1}`,
       createdAt: new Date().toISOString(),
-      frame: metadata.frame || "neutral",
-      bodyType: metadata.bodyType || "average",
+      frame: typeof metadata.frame === "string" ? metadata.frame : "neutral",
+      bodyType:
+        typeof metadata.bodyType === "string" ? metadata.bodyType : "average",
       canvasState: canvasState,
     };
 
@@ -44,6 +66,7 @@ export function saveOutfit(name, canvasState, metadata = {}) {
 
 /**
  * Retrieve a single outfit by unique ID.
+ *
  * @param {string} id
  * @returns {object|null}
  */
@@ -54,6 +77,7 @@ export function getOutfitById(id) {
 
 /**
  * Delete an outfit from LocalStorage by ID.
+ *
  * @param {string} id
  * @returns {Array} Updated array of remaining outfits
  */
