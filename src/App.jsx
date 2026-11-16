@@ -1,8 +1,9 @@
 //Hello. Just practice for pushing stuff.
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { getSavedOutfits, saveOutfit, deleteOutfit } from "./utils/outfitStorage";
 import SavedOutfitsModal from "./components/SavedOutfitsModal";
+import ExportShareModal from "./components/ExportShareModal";
 import {
   Clock3,
   MapPin,
@@ -33,10 +34,20 @@ function App() {
   const [outfitNameInput, setOutfitNameInput] = useState("");
   const [loadedCanvasData, setLoadedCanvasData] = useState(null);
   const [isSharingDesign, setIsSharingDesign] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
 
   // Ref to hold canvas serializer from DesignCanvas
   const canvasInterfaceRef = useRef(null);
+
+  const handleGeneratePreview = useCallback((backgroundColor) => {
+    if (!canvasInterfaceRef.current?.exportOutfitPNG) {
+      return Promise.reject(new Error("Canvas is not ready"));
+    }
+
+    return canvasInterfaceRef.current.exportOutfitPNG(backgroundColor);
+  }, []);
+
 
   // Sync saved outfits from localStorage on initial render
   useEffect(() => {
@@ -91,13 +102,48 @@ function App() {
     setSavedOutfits(remaining);
   };
 
-  const handleShareDesign = async () => {
+
+  const handleExportDesign = async ({ name, backgroundColor }) => {
     setIsSharingDesign(true);
     setShareMessage("");
 
     try {
       const pngDataUrl =
-        await canvasInterfaceRef.current?.exportOutfitPNG("#ffffff");
+        await canvasInterfaceRef.current?.exportOutfitPNG(backgroundColor);
+
+      if (!pngDataUrl) {
+        throw new Error("Could not generate the image.");
+      }
+
+      const fileName =
+        (name.trim().replace(/[^a-z0-9_-]+/gi, "-") || "closet-design") +
+        ".png";
+
+      const link = document.createElement("a");
+      link.href = pngDataUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      setShareMessage("Your outfit was exported successfully.");
+      setIsExportModalOpen(false);
+    } catch (error) {
+      console.error("Export failed:", error);
+      setShareMessage("Unable to export your outfit.");
+    } finally {
+      setIsSharingDesign(false);
+    }
+  };
+
+  const handleShareDesign = async ({ name, backgroundColor }) => {
+    setIsSharingDesign(true);
+    setShareMessage("");
+    const fileName = `${name.trim().replace(/[^a-z0-9_-]+/gi, "-") || "closet-design"}.png`;
+
+    try {
+      const pngDataUrl =
+        await canvasInterfaceRef.current?.exportOutfitPNG(backgroundColor);
 
       if (!pngDataUrl) {
         throw new Error("The design image could not be created.");
@@ -413,7 +459,10 @@ function App() {
             </div>
             <button
               type="button"
-              onClick={handleShareDesign}
+              onClick={() => {
+                setShareMessage("");
+                setIsExportModalOpen(true);
+              }}
               disabled={isSharingDesign}
               className="flex shrink-0 items-center gap-2 rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 disabled:cursor-wait disabled:opacity-60"
             >
@@ -450,6 +499,15 @@ function App() {
         onLoadOutfit={handleLoadOutfit}
         onDeleteOutfit={handleDeleteOutfit}
       />
+      <ExportShareModal
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+        onGeneratePreview={handleGeneratePreview}
+        onExport={handleExportDesign}
+        onShare={handleShareDesign}
+        isProcessing={isSharingDesign}
+      />
+
     </div>
   );
 }
